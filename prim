@@ -1,0 +1,84 @@
+import bisect
+
+def read_graph():
+    list = []
+    n, m = map(int, input().split())
+    graph = {i: {} for i in range(n)}
+    for edge in range(m):
+        a, b, c = map(int, input().split())
+        graph[a][b] = c
+        graph[b][a] = c
+        list.append(c)
+    return graph, list, n
+
+
+def tre(G, k, x, s, stack, time):
+    stack.append(x)
+    a = k
+    for t in G[x]:
+        if G[x][t] <= a:
+            a = G[x][t]
+            v = t
+    stack.append(v)
+    s += a
+    time += 1
+    if time != n:
+        tre(G, k, v, s, stack, time)
+    return s, stack
+
+def tree(G, x):
+    d = [float('+inf') for i in range(len(G))]
+    p = [-1 for i in range(n)]
+
+    d[x] = 0
+
+    queue = [(0, x)]
+    marked = set()
+    while queue:
+        w, v0 = queue.pop(0)
+        marked.add(v0)
+        for neib in G[v0]: #{3: 4, 6: 999}
+            print(neib, G[v0][neib])
+            if neib not in marked and G[v0][neib] < d[neib]:
+                p[neib]  = v0
+                d[v0] = G[v0][neib]
+                bisect.insort(queue, (G[v0][neib], neib))
+
+    return p, d
+
+    # stack.append(x)
+    # a = k
+    #
+    # st = []
+    # st.append(x)
+    # for t in G[x]:
+    #     i = bisect.bisect_left(st, G[x][t])
+    #     st.insert(i, G[x][t])
+    #
+    # print(*st)
+    # time += 1
+    # return s, stack
+
+
+
+graph, list, n = read_graph()
+k = max(list)
+stack = []
+parent, disctance = tree(graph, 0)
+print(parent, disctance)
+
+res = []
+for i in range(1, len(parent)):
+    res.append("%d %d" % (parent[i], i))
+
+print(sum(x for x in disctance if x != float('+inf')))
+print(*res)
+
+
+#print(s)
+'''for line in graph:
+    for t in graph[line]:
+        print(graph[line][t], end = ' ')
+    print()
+print(graph)
+print(list)'''
